@@ -10,7 +10,7 @@ class App extends Component {
     super(props);
     // this is the *only* time you should assign directly to state:
     this.state = {
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: ""}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [] //messages coming from the server will be stored here when they arrive 
     };
   }
@@ -39,13 +39,17 @@ class App extends Component {
 
   userChange = (event) => {
     let newValue = event.target.value
+    console.log("Testing for user value here", newValue)
     this.setState({
-      content: newValue
+      currentUser: {
+        name: newValue
+      } 
       
     })
     console.log("testing HERE", newValue)
 
   }
+
 
 // in App.jsx
 componentDidMount() {
@@ -61,11 +65,21 @@ componentDidMount() {
   }, 3000);
 
   this.socket = new WebSocket("ws://localhost:3001")
+  this.socket.onmessage =  (event) => {
+    const parsedMessage = JSON.parse(event.data);
+    this.setState({
+      messages: [...this.state.messages, parsedMessage]
+    })
+    
+    console.log("TESTING HERE", parsedMessage);
+  }
 // this.socket.onopen = () => {
 //     // when the socket opens
-//     this.socket.send("Heyoooooo")
-//     console.log("Connected to server")
+  
 // }
+
+
+
 
 }
 
@@ -76,7 +90,7 @@ componentDidMount() {
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
-        <ChatBar messageChange={this.messageChange} currentUser={this.state.currentUser} />
+        <ChatBar userChange={this.userChange} messageChange={this.messageChange} currentUser={this.state.currentUser} />
         <MessageList messages={this.state.messages} />
   
   

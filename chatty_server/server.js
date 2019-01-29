@@ -32,6 +32,7 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', (ws) => {
   console.log('Client connected');
   ws.on('message', function (message) {
+
     // do thing
     // console.log("User", message.username + " said " + message.content);
     // console.log(JSON.parse(message).username)
@@ -42,6 +43,10 @@ wss.on('connection', (ws) => {
 
     wss.broadcast(messageWithId);
     console.log("User "+parsedMessage.username+" said "+parsedMessage.content)
+    // if (messageWithId.length) {
+    //     f.write(text);
+    //     document.getElementById("chatbox").contentWindow.scrollByPages(1);
+    //   }
 })
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
