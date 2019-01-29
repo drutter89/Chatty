@@ -11,36 +11,28 @@ class App extends Component {
     // this is the *only* time you should assign directly to state:
     this.state = {
       currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-          id:"HasdfU"
-        },
-        {
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good.",
-          id: "YlOFwlkf"
-        }
-      ]
+      messages: [] //messages coming from the server will be stored here when they arrive 
     };
   }
 
   messageChange = (event) => {
     if (event.key === 'Enter') {
-      console.log(this.state.messages);
-
+      console.log("Heyoooo",this.state.messages);
+    // clientMessage.id = uuidv4();
+  
     let newValue = event.target.value
     let newData = {
       username: this.state.currentUser.name,
       content: newValue,
-      id: "FLEIFjsdl"
     }
-    this.setState({
-      messages: [...this.state.messages,newData]
+    // this.setState({
+    //   messages: [...this.state.messages,newData]
       
-    })
-    console.log("testing HERE", newValue)
+    // })
+
+    this.socket.send(JSON.stringify(newData))
+    console.log("User", newData.username + " said " + newData.content)
+    // console.log("Getting the user message here first before terminal window", newData.message.username)
 
   }
 }
@@ -67,6 +59,14 @@ componentDidMount() {
     // Calling setState will trigger a call to render() in App and all child components.
     this.setState({messages: messages})
   }, 3000);
+
+  this.socket = new WebSocket("ws://localhost:3001")
+// this.socket.onopen = () => {
+//     // when the socket opens
+//     this.socket.send("Heyoooooo")
+//     console.log("Connected to server")
+// }
+
 }
 
   render() {
