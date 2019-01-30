@@ -12,13 +12,14 @@ class App extends Component {
     // this is the *only* time you should assign directly to state:
     this.state = {
       currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [] //messages coming from the server will be stored here when they arrive 
+      messages: [], //messages coming from the server will be stored here when they arrive 
+      users:0
     };
   }
 
   messageChange = (event) => {
     if (event.key === 'Enter') {
-      console.log("Heyoooo",this.state.messages);
+      // console.log("Heyoooo",this.state.messages);
   
     let newValue = event.target.value
     let newData = {
@@ -32,7 +33,7 @@ class App extends Component {
     // })
 
     this.socket.send(JSON.stringify(newData))
-    console.log("User", newData.username + " said " + newData.content)
+    // console.log("User", newData.username + " said " + newData.content)
     // console.log("Getting the user message here first before terminal window", newData.message.username)
 
   }
@@ -42,8 +43,8 @@ class App extends Component {
     if (event.key === 'Enter'){  
     let oldName = this.state.currentUser.name
     let newValue = event.target.value
-    console.log("Old Name", oldName)
-    console.log("Testing for user value here", newValue)
+    // console.log("Old Name", oldName)
+    // console.log("Testing for user value here", newValue)
     
 
     let newUsernameObject = {
@@ -52,7 +53,7 @@ class App extends Component {
         content: "User changed names",
         type: "postNotification"
     }
-    console.log("testing HERE", newUsernameObject.oldName)
+    // console.log("testing HERE", newUsernameObject.oldName)
     this.socket.send(JSON.stringify(newUsernameObject))
 
     this.setState({
@@ -63,9 +64,9 @@ class App extends Component {
       } 
       
     })
-    console.log("TESTING NEWNAME AGAIN",newValue);
-    console.log("TESTING OLDNAME AGAIN",oldName);
-    console.log("TESTING OBJECT HERE", newUsernameObject);
+    // console.log("TESTING NEWNAME AGAIN",newValue);
+    // console.log("TESTING OLDNAME AGAIN",oldName);
+    // console.log("TESTING OBJECT HERE", newUsernameObject);
 
 
   }
@@ -80,8 +81,11 @@ componentDidMount() {
 
 
   this.socket = new WebSocket("ws://localhost:3001")
-  this.socket.onmessage =  (event) => {
+  this.socket.onmessage =  (event, users) => {
     const parsedMessage = JSON.parse(event.data);
+
+    // const userCount = JSON.parse(users);
+    // console.log("userCount HERE", userCount)
   
     console.log("DATA", parsedMessage);
     switch(parsedMessage.type) {
@@ -100,9 +104,14 @@ componentDidMount() {
         })
         console.log("incomingNotification")
         break;
+      case "clientCountMessage":
+        this.setState({
+          users: parsedMessage.userCount
+        })
+        break;
       default:
         // show an error in the console if the message type is unknown
-        throw new Error("Unknown event type " + event.type);
+        throw new Error("Unknown event type " + parsedMessage.type);
     }
     // this.setState({
     //   messages: [...this.state.messages, parsedMessage]
@@ -126,6 +135,7 @@ componentDidMount() {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a>
+          <h2 className="user-count">{this.state.users}</h2>
         </nav>
         <ChatBar userChange={this.userChange} messageChange={this.messageChange} currentUser={this.state.currentUser} />
         <MessageList messages={this.state.messages} />

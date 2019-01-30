@@ -30,36 +30,56 @@ wss.broadcast = function broadcast(data) {
   
 
 wss.on('connection', (ws) => {
-  console.log('Client connected');
-  ws.on('message', function (message) {
-let parsedMessage =  JSON.parse(message);
-let messageType = parsedMessage.type;
-console.log("What is the message type", messageType);
+    console.log('Client connected');
+    let userCount = wss.clients.size;
 
-    if(messageType === "postNotification"){
-    // do thing
-    let notificationMessage = JSON.parse(message);
-    notificationMessage.type="incomingNotification"
-    const sendNotification = JSON.stringify(notificationMessage)
-    wss.broadcast(sendNotification)
-    } 
-    
-    else if(messageType === "postMessage"){
-    let parsedMessage = JSON.parse(message);
-    parsedMessage.id = uuidv4();
-    parsedMessage.type = "incomingMessage";
-    const messageWithId = JSON.stringify(parsedMessage);
-    // console.log("Testing Notification",messageWithId);
-
-    wss.broadcast(messageWithId);
-    console.log("User "+parsedMessage.username+" said "+parsedMessage.content)
+    let users ={
+        userCount:userCount,
+        type:"clientCountMessage"
     }
-    // if (messageWithId.length) {
-    //     f.write(text);
-    //     document.getElementById("chatbox").contentWindow.scrollByPages(1);
-    //   }
+
+    wss.broadcast(JSON.stringify(users))
+ 
+
+    ws.on('message', function (message) {
+        let parsedMessage =  JSON.parse(message);
+        let messageType = parsedMessage.type;
+        console.log("What is the message type", messageType);
+
+        if(messageType === "postNotification"){
+        // do thing
+        let notificationMessage = JSON.parse(message);
+        notificationMessage.type="incomingNotification"
+        const sendNotification = JSON.stringify(notificationMessage)
+        wss.broadcast(sendNotification)
+        } 
+        
+        else if(messageType === "postMessage"){
+        let parsedMessage = JSON.parse(message);
+        parsedMessage.id = uuidv4();
+        parsedMessage.type = "incomingMessage";
+        const messageWithId = JSON.stringify(parsedMessage);
+        // console.log("Testing Notification",messageWithId);
+
+        wss.broadcast(messageWithId);
+        console.log("User "+parsedMessage.username+" said "+parsedMessage.content)
+        }
+        // if (messageWithId.length) {
+        //     f.write(text);
+        //     document.getElementById("chatbox").contentWindow.scrollByPages(1);
+        //   }
     })
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-ws.on('close', () => console.log('Client disconnected'));
+    ws.on('close', () => console.log('Client disconnected'));
+
+    // let userCount = wss.clients.size;
+
+    // let users ={
+    //     userCount:userCount -1,
+    //     type:"clientCountMessage"
+    // }
+
+    // wss.broadcast(JSON.stringify(users))
+
 });
