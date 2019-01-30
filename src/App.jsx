@@ -38,17 +38,27 @@ class App extends Component {
 }
 
   userChange = (event) => {
-    if (event.key === 'Enter'){
+    if (event.key === 'Enter'){  
     let newValue = event.target.value
     console.log("Testing for user value here", newValue)
+    
+
+    let newUsernameObject = {
+        oldName: this.state.name,
+        newName: newValue,
+        content: "User changed names",
+        type: "postNotification"
+    }
+    console.log("testing HERE", newValue)
+    this.socket.send(JSON.stringify(newUsernameObject))
+
     this.setState({
       currentUser: {
-        name: newValue
-        
+        name: newValue,
+        // content: "User changed names"
       } 
       
     })
-    console.log("testing HERE", newValue)
 
   }
 }
@@ -78,9 +88,9 @@ componentDidMount() {
       case "incomingNotification":
         // handle incoming notification
         this.setState({
-          messages: [...this.state.messages, "NOTIFICATION SOMETHING CHANGED"]
+          messages: [...this.state.messages, parsedMessage]
         })
-        console.log("incomingNotification", messages)
+        console.log("incomingNotification")
         break;
       default:
         // show an error in the console if the message type is unknown
@@ -111,10 +121,7 @@ componentDidMount() {
         </nav>
         <ChatBar userChange={this.userChange} messageChange={this.messageChange} currentUser={this.state.currentUser} />
         <MessageList messages={this.state.messages} />
-  
-  
-  
-       
+        {/* <Notification messages={this.state.messages} /> */}
       </div>
     )
   }
