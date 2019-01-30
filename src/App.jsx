@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ChatBar from "./ChatBar.jsx";
 import MessageList from "./MessageList.jsx";
+import Notification from "./Notification.jsx";
 
 
 
@@ -123,7 +124,7 @@ componentDidMount() {
         </nav>
         <ChatBar userChange={this.userChange} messageChange={this.messageChange} currentUser={this.state.currentUser} />
         <MessageList messages={this.state.messages} />
-        {/* <Notification messages={this.state.messages} /> */}
+        <Notification oldName={this.state.currentUser.name} />
       </div>
     )
   }
