@@ -32,23 +32,34 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', (ws) => {
   console.log('Client connected');
   ws.on('message', function (message) {
+let parsedMessage =  JSON.parse(message);
+let messageType = parsedMessage.type;
+console.log("What is the message type", messageType);
 
+    if(messageType === "postNotification"){
     // do thing
-    // console.log("User", message.username + " said " + message.content);
-    // console.log(JSON.parse(message).username)
+    let notificationMessage = JSON.parse(message);
+    notificationMessage.type="incomingNotification"
+    const sendNotification = JSON.stringify(notificationMessage)
+    wss.broadcast(sendNotification)
+    } 
+    
+    else if(messageType === "postMessage"){
     let parsedMessage = JSON.parse(message);
     parsedMessage.id = uuidv4();
+    parsedMessage.type = "incomingMessage";
     const messageWithId = JSON.stringify(parsedMessage);
-    console.log("Testing here",messageWithId);
+    // console.log("Testing Notification",messageWithId);
 
     wss.broadcast(messageWithId);
     console.log("User "+parsedMessage.username+" said "+parsedMessage.content)
+    }
     // if (messageWithId.length) {
     //     f.write(text);
     //     document.getElementById("chatbox").contentWindow.scrollByPages(1);
     //   }
-})
+    })
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log('Client disconnected'));
+ws.on('close', () => console.log('Client disconnected'));
 });

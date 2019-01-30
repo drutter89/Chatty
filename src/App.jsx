@@ -10,7 +10,7 @@ class App extends Component {
     super(props);
     // this is the *only* time you should assign directly to state:
     this.state = {
-      currentUser: {name: ""}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: [] //messages coming from the server will be stored here when they arrive 
     };
   }
@@ -18,12 +18,12 @@ class App extends Component {
   messageChange = (event) => {
     if (event.key === 'Enter') {
       console.log("Heyoooo",this.state.messages);
-    // clientMessage.id = uuidv4();
   
     let newValue = event.target.value
     let newData = {
       username: this.state.currentUser.name,
       content: newValue,
+      type: "postMessage",
     }
     // this.setState({
     //   messages: [...this.state.messages,newData]
@@ -43,6 +43,7 @@ class App extends Component {
     this.setState({
       currentUser: {
         name: newValue
+        
       } 
       
     })
@@ -64,12 +65,36 @@ componentDidMount() {
     this.setState({messages: messages})
   }, 3000);
 
+
+
   this.socket = new WebSocket("ws://localhost:3001")
   this.socket.onmessage =  (event) => {
     const parsedMessage = JSON.parse(event.data);
-    this.setState({
-      messages: [...this.state.messages, parsedMessage]
-    })
+  
+    console.log("DATA", parsedMessage);
+    switch(parsedMessage.type) {
+      case "incomingMessage":
+        // handle incoming message
+        this.setState({
+          messages: [...this.state.messages, parsedMessage]
+        })
+
+        console.log("incomingMessage")
+        break;
+      case "incomingNotification":
+        // handle incoming notification
+        this.setState({
+          messages: [...this.state.messages, "NOTIFICATION SOMETHING CHANGED"]
+        })
+        console.log("incomingNotification", messages)
+        break;
+      default:
+        // show an error in the console if the message type is unknown
+        throw new Error("Unknown event type " + event.type);
+    }
+    // this.setState({
+    //   messages: [...this.state.messages, parsedMessage]
+    // })
     
     console.log("TESTING HERE", parsedMessage);
   }
