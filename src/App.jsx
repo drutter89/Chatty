@@ -40,6 +40,8 @@ class App extends Component {
   userChange = (event) => {
     if (event.key === 'Enter'){  
     let newValue = event.target.value
+    let oldName = this.state.currentUser.name
+    console.log("Old Name", oldName)
     console.log("Testing for user value here", newValue)
     
 
