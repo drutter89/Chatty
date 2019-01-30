@@ -40,28 +40,33 @@ class App extends Component {
 
   userChange = (event) => {
     if (event.key === 'Enter'){  
-    let newValue = event.target.value
     let oldName = this.state.currentUser.name
+    let newValue = event.target.value
     console.log("Old Name", oldName)
     console.log("Testing for user value here", newValue)
     
 
     let newUsernameObject = {
-        oldName: this.state.name,
+        oldName: oldName,
         newName: newValue,
         content: "User changed names",
         type: "postNotification"
     }
-    console.log("testing HERE", newValue)
+    console.log("testing HERE", newUsernameObject.oldName)
     this.socket.send(JSON.stringify(newUsernameObject))
 
     this.setState({
       currentUser: {
         name: newValue,
+        
         // content: "User changed names"
       } 
       
     })
+    console.log("TESTING NEWNAME AGAIN",newValue);
+    console.log("TESTING OLDNAME AGAIN",oldName);
+    console.log("TESTING OBJECT HERE", newUsernameObject);
+
 
   }
 }
@@ -116,7 +121,7 @@ componentDidMount() {
 }
 
   render() {
-
+    console.log("InsideRender",this.state.currentUser)
     return (
       <div>
         <nav className="navbar">
@@ -124,7 +129,7 @@ componentDidMount() {
         </nav>
         <ChatBar userChange={this.userChange} messageChange={this.messageChange} currentUser={this.state.currentUser} />
         <MessageList messages={this.state.messages} />
-        <Notification oldName={this.state.currentUser.name} />
+        {/* <Notification newName={this.state.currentUser.newName} oldName={this.state.currentUser.oldName} /> */}
       </div>
     )
   }

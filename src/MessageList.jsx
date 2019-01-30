@@ -9,7 +9,8 @@ class MessageList extends Component{
            return (<Message key={message.id} message={message} />)
 
            }else if(message.type === "incomingNotification"){
-               return (<Notification />)
+               console.log("MESSAGE",message)
+               return (<Notification oldName={message.oldName} newName={message.newName} />)
            }
         });
     
