@@ -24,6 +24,10 @@ npm start
 open http://localhost:3000
 ```
 
+!["This is the first page you see when you log in."](https://github.com/drutter89/Chatty/blob/master/docs/Starting%20Screen.png?raw=true)
+!["You can type your name and click enter to set your username"](https://github.com/drutter89/Chatty/blob/master/docs/Username.png?raw=true)
+!["Then you can send a message to anyone else logged in."](https://github.com/drutter89/Chatty/blob/master/docs/Message.png?raw=true)
+
 ### Static Files
 
 You can store static files like images, fonts, etc in the `build` folder.
